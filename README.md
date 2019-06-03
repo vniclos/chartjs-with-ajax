@@ -1,5 +1,7 @@
 # Chart js example with ajax
 
+This is a sigle part of IOT dataloguer build wiht ESP32 module, the main project has 3 temperature sensor, light sensor, preasure sensor, gps, and include web service. the connection is based on wifi, can work as access point or join to your wifi.
+
 ![alt text](https://github.com/vniclos/chartjs-with-ajax/blob/master/img/chartjs.jpg "chartjs example" )
 
 
