@@ -1,4 +1,4 @@
-# ESP32 DEVKIT V1 GPS
+#Chart js example with ajax
 
 ![alt text](https://github.com/vniclos/chartjs-with-ajax/blob/master/img/chartjs.jpg "chartjs example" )
 
