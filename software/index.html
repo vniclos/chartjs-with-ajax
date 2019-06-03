@@ -1,0 +1,280 @@
+<!doctype html>
+<html>
+
+<head>
+			<meta charset="UTF-8"/>
+    <title>Line Chart</title>
+    <script src="js/moment.min.js"></script>
+    <script src="js/Chart.min.js"></script>
+    	<link rel="stylesheet" type="text/css" href="css/chart.css">
+   
+</head>
+
+<body>
+<div class="scnChartBox">
+<canvas id="scnChartCanvas"></canvas>
+<label class="chkbox">Temperatures<input id="scnChkTemp" type="checkbox" checked="checked" onclick="fncDrawPlotToggle()"><span class="chkmark"></span></label>
+<label class="chkbox">Humidity   <input  id="scnChkHumi" type="checkbox"  checked="checked" onclick="fncDrawPlotToggle()"><span class="chkmark"></span></label>
+<label class="chkbox">Preasure   <input id="scnChkPres"  type="checkbox"  checked="checked" onclick="fncDrawPlotToggle()"><span class="chkmark"></span></label>
+<label class="chkbox">Light      <input  id="scnChkLigh" type="checkbox"  checked="checked" onclick="fncDrawPlotToggle()"><span class="chkmark"></span></label>
+
+</div>
+<p id="scnDataTable"></p>
+<script>
+		var g_ChartCanvas = document.getElementById("scnChartCanvas");
+		var g_ChartCtx = g_ChartCanvas.getContext('2d');
+		var g_ChartType='line';
+		var g_Chart;
+	  //-------------
+			var g_Charthata = {
+	//	labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+		datasets: [
+		{yAxisID: 'y-axis-temp',  label: 'Tmp Air',      borderColor: '#ff0000', backgroundColor:'#ff0000', fill: false, data: [{ x: "2014/01/01 00:00:00", y: 10}, { x: "2014/01/01 06:10:00", y: 20 }, {  x: "2014/01/01 12:10:00", y: 30}, {x:"2014/01/01 23:10:00", y: 40 }],}, 
+		{yAxisID: 'y-axis-temp',  label: 'Tmp Soil',     borderColor: '#990000', backgroundColor:'#990000', fill: false, data: [{ x: "2014/01/01 00:00:00", y: 0}, { x: "2014/01/01 06:10:00", y: 10 }, {  x: "2014/01/01 12:10:00", y: 20}, {x:"2014/01/01 23:10:00", y: 30 }],}, 
+		{yAxisID: 'y-axis-temp',  label: 'Tmp Subsoil',  borderColor: '#330000', backgroundColor:'#330000',	fill: false, data: [{ x: "2014/01/01 00:00:00", y: 5}, { x: "2014/01/01 06:10:00", y: 15 }, {  x: "2014/01/01 12:10:00", y: 25}, {x:"2014/01/01 23:10:00", y: 35 }],}, 
+    {yAxisID: 'y-axis-hum',   label: 'Humidity air', borderColor: '#3300ff', backgroundColor: '#3300ff',fill: false, data: [{ x: "2014/01/01 00:00:00", y: 10}, { x: "2014/01/01 06:10:00", y: 20 }, {  x: "2014/01/01 12:10:00", y: 30}, {x:"2014/01/01 23:10:00", y: 90 }],},
+		{yAxisID: 'y-axis-hum',   label: 'Humidity soil',borderColor: '#6600ff', backgroundColor:'#2200ff', fill: false, data: [{ x: "2014/01/01 00:00:00", y: 18}, { x: "2014/01/01 06:10:00", y: 28 }, {  x: "2014/01/01 12:10:00", y: 38}, {x:"2014/01/01 23:10:00", y: 98 }],},
+		{yAxisID: 'y-axis-pres',  label: 'Preasure',     borderColor: '#6622ff', backgroundColor:'#6622ff',	fill: false, data: [{ x: "2014/01/01 00:00:00", y: 700}, { x: "2014/01/01 06:10:00", y: 800 }, {  x: "2014/01/01 12:10:00", y: 900}, {x:"2014/01/01 23:10:00", y: 1000}],},
+		{yAxisID: 'y-axis-light', label: 'Light Lux',    borderColor: "#FF8C00", backgroundColor:"#FF8C00", fill: false, data: [{ x: "2014/01/01 00:00:00", y: 100}, { x: "2014/01/01 06:10:00", y: 10000 }, {  x: "2014/01/01 12:10:00", y: 36000}, {x:"2014/01/01 23:10:00", y: 15000 }],}
+		]
+		};
+	
+	
+	
+	
+	//----------------
+    //var timeFormat = 'YYYY/DD/MM';
+
+   var g_ChartOptions= {
+        responsive: true,
+	  		hoverMode: 'index',
+				stacked: false,
+			  scaleBeginAtZero: false,
+        scaleStartValue : -20 ,
+     
+				title: {display: true,	text: ['WHEATHER OF DAY', '12/12/12']},            
+				
+        scales:{
+           xAxes: [{
+                    type:"time",
+                    time:{
+                        format: "yyyy/mm/dd hh:mm",
+                        unit: 'hour',
+                        unitStepSize: 2,
+                        displayFormats: {   'hour': 'HH', },
+                        tooltipFormat: 'll'
+                    },
+                    scaleLabel: { display:true, labelString: 'Hour'}
+                }],  // FIN xAxes
+               	yAxes: [
+						{
+						  id: 'y-axis-temp',
+							type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
+							title:'Celsious',display: true,
+
+							position: 'left',
+					   scaleLabel: { display: true, labelString: "Celsious", fontColor: "#0505ee"},
+						  ticks: {max: 50,  min: -20, stepSize: 5 , color: "#990000",},
+						gridLines: {drawOnChartArea: false,color: "#ff0000",},
+						},
+						{
+						 	id: 'y-axis-hum',
+							type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
+							display: true,
+							scaleLabel: { display: true, labelString: "Humidity", fontColor: "#0000aa",},
+							position: 'right',
+					    ticks: { max: 100, min: 0, stepSize: 10,color: "#0000aa" },
+							// grid line settings
+							gridLines: {drawOnChartArea: false,color: "#0000aa",},
+						},
+						{
+						 	id: 'y-axis-light',
+							type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
+							display: true,
+							scaleLabel: { display: true, labelString: "Light  Lux", fontColor: "#663300",fontSize:14,},
+							position: 'right',
+					    ticks: { max: 38000, min: 0, stepSize: 2500, color: "#663300",},
+							// grid line settings
+							gridLines: {drawOnChartArea: false,color: "#663300",},
+						},
+						{
+						 	id: 'y-axis-pres',
+							type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
+							display: true,
+							color: "#FF8C00",
+						 scaleLabel: { display: true, labelString: "Press: Hpa", fontColor: "#333333"},
+							position: 'left',
+							//1013 mbar o 760
+					    ticks: { max: 1050, min: 500, stepSize: 50, },
+							// grid line settings
+							gridLines: {drawOnChartArea: false,color: "#333333",},
+						}
+						
+						], // FIN yAxes:
+					}
+					}; // FIN g_ChartOptions
+///////////////////////////////////////////////////////////
+
+ 		fncChartInit();
+	  //-------------------------------------
+	   function fncChartInit() {
+     g_Chart = new Chart(g_ChartCtx, { type: g_ChartType, data: g_Charthata, options: g_ChartOptions  });
+     }
+
+</script>
+
+
+	 <script>
+		 	
+		 	
+function fncDrawAjax(file) {
+    var rawFile = new XMLHttpRequest();
+    rawFile.open("GET", file, true);
+    rawFile.onreadystatechange = function ()
+    {
+        if(rawFile.readyState === 4)
+        {
+            if(rawFile.status === 200 || rawFile.status == 0)
+            {
+            	 var allText = rawFile.responseText;
+               fncDrawPlot(allText); 
+            }
+        }
+    }
+    rawFile.send(null);
+}
+ var aAxir='';
+  var aTAir='';
+  var aTSoil='';
+  var aTSSoil='';
+  var aHAir='';
+  var aHSoil='';
+  var aPAir='';
+  var aLight='';
+  var aTable="";
+ 
+function fncDrawParseAddPoint(aSerie, xDateTime,yVal,sep)
+{
+	if(xDateTime==undefined){ return;}
+	if(xDateTime==''){ return;}
+	if(yVal==undefined){yVal=null;}
+	var aPoint="" ;
+	aPoint = sep+'{"x":"'+xDateTime+'", ';
+	aPoint += '"y":'+ yVal+'}';
+if(aSerie=='aAxir') {aAxir+=aPoint;}        
+else if(aSerie=='aTAir') {aTAir+=aPoint;  }   
+else if(aSerie=='aTSoil') {aTSoil+=aPoint;} 
+else if(aSerie=='aTSSoil') {aTSSoil+=aPoint;}
+else if(aSerie=='aHAir') {aHAir+=aPoint;}   
+else if(aSerie=='aHSoil') {aHSoil+=aPoint;} 
+else if(aSerie=='aPAir') {aPAir+=aPoint;}  
+else if(aSerie=='aLight') {aLight+=aPoint;}
+}
+  
+function fncDrawPlot(allText) {
+
+   aAxir='[';
+   aTAir='[';
+   aTSoil='[';
+   aTSSoil='[';
+   aHAir='[';
+   aHSoil='[';
+   aPAir='[';
+   aLight='[';
+  
+	var aLines=allText.split(/\r?\n/);
+	var aVal=[];
+	var sep='';
+//aTable="<table class='tablegray'><th>Date Time</th><th colspan:'3'>temperature</th><th  colspan:'2'>humidity</th><th>Preasure</th>light</th><tr>\n";
+  aTable="<table class='tablegray'><thead>";
+  aTable+="<tr><th>Date Time</th><th colspan='3'>temperature</th><th  colspan='2'>humidity</th><th>Preasure</th><th>light</th><tr>\n";
+  aTable+="<tr><th>yyymmdd hhmmss</th><th>Air</th><th>Soil</th><th>Subsoil</th><th>Air</th><th>Soil</th><th>%</th><th>lux</th><tr>\n"; 
+  aTable+="</thead><tbody>";
+  for (i=0;i<aLines.length;i++)
+  {
+	
+ 	   aVal=aLines[i].split(';');
+ 	   if(aVal[0] ==undefined)  { return;}
+ 	   sDateTime = aVal[0];
+ 	   fncDrawParseAddPoint('aTAir',   sDateTime,aVal[1],sep);
+ 	   fncDrawParseAddPoint('aTSoil',  sDateTime,aVal[2],sep);
+ 	   fncDrawParseAddPoint('aTSSoil', sDateTime,aVal[3],sep);
+ 	   fncDrawParseAddPoint('aHAir',   sDateTime,aVal[4],sep);
+ 	   fncDrawParseAddPoint('aHSoil',  sDateTime,aVal[5],sep);
+ 	   fncDrawParseAddPoint('aPAir',   sDateTime,aVal[6],sep);
+ 	   fncDrawParseAddPoint('aLight',  sDateTime,aVal[7],sep);
+ 	   sep=', ';
+ 	   aTable+="<tr><th>"+ aVal[0]+"</th>";
+ 	    aTable+="<th>"+ aVal[1]+"</th>";
+ 	   aTable+="<th>"+ aVal[2]+"</th>";
+ 	   aTable+="<th>"+ aVal[3]+"</th>";
+ 	   aTable+="<th>"+ aVal[4]+"</th>";
+ 	   aTable+="<th>"+ aVal[5]+"</th>";
+ 	   aTable+="<th>"+ aVal[6]+"</th>";
+ 	   aTable+="<th>"+ aVal[7]+"</th></tr>\n";
+ 	   	
+ 	 }
+ 	  aTable+="</table>";
+ 	  //alert(aTable);
+ 	  document.getElementById("scnDataTable").innerHTML=aTable;
+   aAxir+=']';
+   aTAir+=']';
+   aTSoil+=']';
+   aTSSoil+=']';
+   aHAir+=']';
+   aHSoil+=']';
+   aPAir+=']';
+   aLight+=']';
+ 	 
+
+   //g_Charthata.datasets[0].data=[{x:"2010/06/01 0:00:00", y:9.00},{x:"2010/06/01 0:15:00", y:9.25},{x:"2010/06/01 0:30:00", y:9.66},{x:"2010/06/01 0:45:00", y:9.79},{x:"2010/06/01 1:00:00", y:10.53},{x:"2010/06/01 1:15:00", y:11.41},{x:"2010/06/01 1:30:00", y:11.77},{x:"2010/06/01 1:45:00", y:11.91},{x:"2010/06/01 2:00:00", y:12.84},{x:"2010/06/01 2:15:00", y:12.93},{x:"2010/06/01 2:30:00", y:13.27},{x:"2010/06/01 2:45:00", y:13.87},{x:"2010/06/01 3:00:00", y:14.27},{x:"2010/06/01 3:15:00", y:14.64},{x:"2010/06/01 3:30:00", y:15.27},{x:"2010/06/01 3:45:00", y:16.01},{x:"2010/06/01 4:00:00", y:16.32},{x:"2010/06/01 4:15:00", y:16.74},{x:"2010/06/01 4:30:00", y:17.45},{x:"2010/06/01 4:45:00", y:17.76},{x:"2010/06/01 5:00:00", y:17.84},{x:"2010/06/01 5:15:00", y:18.48},{x:"2010/06/01 5:30:00", y:19.02},{x:"2010/06/01 5:45:00", y:19.88},{x:"2010/06/01 6:00:00", y:20.58},{x:"2010/06/01 6:15:00", y:20.65},{x:"2010/06/01 6:30:00", y:21.00},{x:"2010/06/01 6:45:00", y:21.87},{x:"2010/06/01 7:00:00", y:22.68},{x:"2010/06/01 7:15:00", y:22.86},{x:"2010/06/01 7:30:00", y:23.20},{x:"2010/06/01 7:45:00", y:23.33},{x:"2010/06/01 8:00:00", y:24.14},{x:"2010/06/01 8:15:00", y:24.53},{x:"2010/06/01 8:30:00", y:25.32},{x:"2010/06/01 8:45:00", y:25.55},{x:"2010/06/01 9:00:00", y:25.56},{x:"2010/06/01 9:15:00", y:26.03},{x:"2010/06/01 9:30:00", y:26.07},{x:"2010/06/01 9:45:00", y:26.83},{x:"2010/06/01 10:00:00", y:27.64},{x:"2010/06/01 10:15:00", y:28.15},{x:"2010/06/01 10:30:00", y:28.25},{x:"2010/06/01 10:45:00", y:28.27},{x:"2010/06/01 11:00:00", y:28.82},{x:"2010/06/01 11:15:00", y:29.40},{x:"2010/06/01 11:30:00", y:30.17},{x:"2010/06/01 11:45:00", y:31.12},{x:"2010/06/01 12:00:00", y:31.31},{x:"2010/06/01 12:15:00", y:31.63},{x:"2010/06/01 12:30:00", y:32.18},{x:"2010/06/01 12:45:00", y:32.33},{x:"2010/06/01 13:00:00", y:33.28},{x:"2010/06/01 13:15:00", y:33.99},{x:"2010/06/01 13:30:00", y:34.38},{x:"2010/06/01 13:45:00", y:34.52},{x:"2010/06/01 14:00:00", y:34.62},{x:"2010/06/01 14:15:00", y:34.95},{x:"2010/06/01 14:30:00", y:34.98},{x:"2010/06/01 14:45:00", y:35.41},{x:"2010/06/01 15:00:00", y:36.33},{x:"2010/06/01 15:15:00", y:36.83},{x:"2010/06/01 15:30:00", y:37.06},{x:"2010/06/01 15:45:00", y:37.73},{x:"2010/06/01 16:00:00", y:38.52},{x:"2010/06/01 16:15:00", y:39.19},{x:"2010/06/01 16:30:00", y:39.69},{x:"2010/06/01 16:45:00", y:40.40},{x:"2010/06/01 17:00:00", y:41.10},{x:"2010/06/01 17:15:00", y:41.91},{x:"2010/06/01 17:30:00", y:42.30},{x:"2010/06/01 17:45:00", y:42.80},{x:"2010/06/01 18:00:00", y:43.26},{x:"2010/06/01 18:15:00", y:44.11},{x:"2010/06/01 18:30:00", y:44.40},{x:"2010/06/01 18:45:00", y:44.44},{x:"2010/06/01 19:00:00", y:44.98},{x:"2010/06/01 19:15:00", y:45.54},{x:"2010/06/01 19:30:00", y:45.71},{x:"2010/06/01 19:45:00", y:46.08},{x:"2010/06/01 20:00:00", y:46.75},{x:"2010/06/01 20:15:00", y:47.68},{x:"2010/06/01 20:30:00", y:48.11},{x:"2010/06/01 20:45:00", y:48.41},{x:"2010/06/01 21:00:00", y:49.32},{x:"2010/06/01 21:15:00", y:49.42},{x:"2010/06/01 21:30:00", y:49.53},{x:"2010/06/01 21:45:00", y:50.42},{x:"2010/06/01 22:00:00", y:51.09},{x:"2010/06/01 22:15:00", y:51.98},{x:"2010/06/01 22:30:00", y:52.36},{x:"2010/06/01 22:45:00", y:52.44},{x:"2010/06/01 23:00:00", y:53.05},{x:"2010/06/01 23:15:00", y:53.42},{x:"2010/06/01 23:30:00", y:53.56},{x:"2010/06/01 23:45:00", y:54.11}]; // temp air
+   g_Charthata.datasets[0].data=JSON.parse(aTAir); // temp air
+   g_Charthata.datasets[1].data=JSON.parse(aTSoil); // temp soil
+   g_Charthata.datasets[2].data=JSON.parse(aTSSoil); //temp subsoil
+   g_Charthata.datasets[3].data=JSON.parse(aHAir);  // humidity air
+   g_Charthata.datasets[4].data=JSON.parse(aHSoil); //humidity soil
+   g_Charthata.datasets[5].data=JSON.parse(aPAir); //pression air
+   g_Charthata.datasets[6].data=JSON.parse(aLight); //light
+   //window.myLine.update();
+   window.g_Chart.update();
+   
+}
+function fncDrawToogleAxis()
+{
+	alert("No funciona");
+	 // g_Chart.destroy();
+	g_ChartOptions.scales.yAxes[1].ticks.hidden=true;
+	//fncChartInit();
+	window.g_Chart.update();
+	alert("aqui 2");
+	}
+function	fncDrawPlotToggle()
+{
+	var bTemp=true;
+	var bHum=true;
+	var bPres=true;
+	var bLigh=true;
+	if( document.getElementById("scnChkTemp").checked) {bTemp=false;	}
+	if( document.getElementById("scnChkHumi").checked) {bHum=false;	}
+	if( document.getElementById("scnChkPres").checked) {bPres=false;	}
+	if( document.getElementById("scnChkLigh").checked) {bLigh=false;	}
+// README https://codepen.io/k3no/pen/zBXqYR
+	//g_Charthata.scales[0].hidden=bTemp; 
+	g_Charthata.datasets[0].hidden=bTemp; 
+	g_Charthata.datasets[1].hidden=bTemp;
+	g_Charthata.datasets[2].hidden=bTemp;
+	g_Charthata.datasets[3].hidden=bHum;
+	g_Charthata.datasets[4].hidden=bHum;
+  g_Charthata.datasets[5].hidden=bPres;
+	g_Charthata.datasets[6].hidden=bLigh;
+  window.g_Chart.update();
+
+}
+window.onload = function() {
+ fncDrawAjax('\data.txt');
+};
+		 	</script>
+
+</body>
+
+</html>
