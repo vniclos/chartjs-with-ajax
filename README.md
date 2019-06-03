@@ -1,11 +1,11 @@
-#Chart js example with ajax
+# Chart js example with ajax
 
 ![alt text](https://github.com/vniclos/chartjs-with-ajax/blob/master/img/chartjs.jpg "chartjs example" )
 
 
 ## Software
-- chart.js 
-- moment.js
+- chart.js  you can get from https://www.chartjs.org/
+- moment.js. you can get from https://momentjs.com/
 
 ### You can get 
 - Call ajax for load data from textplain file , transform data in suitable for chart.js library
