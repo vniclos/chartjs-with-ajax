@@ -1,6 +1,6 @@
 # ESP32 DEVKIT V1 GPS
 
-![alt text](https://github.com/vniclos/chartjs-with-ajax/blob/master/img/chartjs.jpg?raw=true "chartjs example )
+![alt text](https://github.com/vniclos/chartjs-with-ajax/blob/master/img/chartjs.jpg "chartjs example" )
 
 
 ## Software
